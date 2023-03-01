@@ -47,3 +47,8 @@ def parse_job_item(job_item):
     }
     
     return job_items_dict
+
+def filter_year(job_item):
+    import_date = job_item['import_date']
+    [year, month, day] = import_date.split('-')
+    return year == '2023'
