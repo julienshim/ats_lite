@@ -75,3 +75,12 @@ def fetch_all_jobs():
             sleep(rand_num)
 
     return tmp
+
+def get_job_ref_date(row):
+    pass
+    [import_date, job_reference_no, job_title, department, location, job_posting_url, status, notes] = row
+    tmp = {
+        'job_reference_no': job_reference_no,
+        'import_date': import_date
+    }
+    return tmp
