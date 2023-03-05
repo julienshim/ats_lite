@@ -90,3 +90,18 @@ def load_previously_imported_jobs():
         data = [row for row in reader(ref)][1:]
         data = list(map(get_job_ref_date, data))
         return data
+
+all_job_items_fetched = fetch_all_jobs()
+previously_imported_jobs_path = ''
+previously_imported_jobs_path_exists = path.exists(previously_imported_jobs_path)
+previously_imported_jobs = load_previously_imported_jobs() if previously_imported_jobs_path_exists else []
+previously_imported_jobs_len = len(previously_imported_jobs)
+csv_write_mode = 'a' if previously_imported_jobs_path_exists else 'w'
+
+def job_is_previously_imported(job_reference_no):
+    if previously_imported_jobs_len > 0:
+        for job_item in previously_imported_jobs:
+            if job_item['job_reference_no'] == job_reference_no:
+                return job_item
+    tmp = {'job_reference_no': '', 'import_date': ''}
+    return tmp
