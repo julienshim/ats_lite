@@ -105,3 +105,32 @@ def job_is_previously_imported(job_reference_no):
                 return job_item
     tmp = {'job_reference_no': '', 'import_date': ''}
     return tmp
+
+with open(previously_imported_jobs_path, csv_write_mode, encoding='utf-8') as f:
+    csv_writer = writer(f)
+    if csv_write_mode == 'w':
+        csv_writer.writerow(['import_date', 'job_reference_no', 'job_title', 'department', 'location', 'job_posting_url', 'status', 'notes'])
+
+    jobs_written_count = 0
+    jobs_skipped_count = 0
+
+    for job_item in all_job_items_fetched:
+        job_title = job_item['job_title']
+        job_posting_url = job_item['job_link']
+        job_reference_no = job_item['job_reference']
+        department = job_item['department']
+        location = job_item['location']
+        import_date = job_item['import_date']
+
+        import_status = job_is_previously_imported(job_reference_no)
+        import_job_reference_no = import_status["job_reference_no"]
+        import_import_date = import_status["import_date"]
+
+        if import_job_reference_no and import_import_date:
+            jobs_skipped_count += 1
+        else:
+            job_item_row = [import_date, job_reference_no, job_title, department, location, job_posting_url, '', '']
+            csv_writer.writerow(job_item_row)
+            jobs_written_count += 1
+
+    print(f'Done! {jobs_written_count} new jobs added.')
