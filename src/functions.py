@@ -51,3 +51,13 @@ def get_job_posting_details(internal_job_posting_url):
     values = list(tmp.values())
     del values[4]
     return values
+
+def get_target_locations():
+    locations = search_parameters['location']
+    return '+'.join(locations)
+
+def get_date_n_weeks_ago():
+    today = datetime.now()
+    delta = timedelta(weeks=no_of_weeks_limit)
+    two_weeks_ago = today - delta
+    return two_weeks_ago
