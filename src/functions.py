@@ -61,3 +61,180 @@ def get_date_n_weeks_ago():
     delta = timedelta(weeks=no_of_weeks_limit)
     two_weeks_ago = today - delta
     return two_weeks_ago
+
+def generate_html_doc(jtrw):
+    html_template = """
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ATS Report</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+        <style>
+            body {
+                color: #333333;
+            }
+
+            .top-word {
+                background-color: lightgrey;
+            }
+
+            .n-match {
+                border-bottom: 5px solid;
+            }
+
+            .job-reference {
+                color: grey;
+            }
+
+            .department {
+                color: black;
+                border-radius: 25px;
+                border: 1px solid lightgrey;
+                background-color: darkgrey;
+                padding: 6px 12px;
+                margin-right: 12px;
+            }
+
+            .accordion-button:not(.collapsed) {
+                background-color: lightgrey;
+            }
+
+            .accordion-button-container {
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .reference-container {
+                display:flex;
+                justify-content: space-between;
+                margin: 0 12px 48px 0;
+                padding: 3px 6px;
+                border: 1px solid lightgrey;
+            }
+
+            .jd-text {
+                padding: 6px 24px;
+            }
+
+            .jd-text div {
+                margin-bottom: 48px;
+            }
+
+            .job_title {
+                color: blue;
+            }
+
+
+        </style>
+    </head>
+
+    <body>
+
+        <div class="accordion" id="accordionResults">
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+
+            const results = $$jtwr$$
+
+            const generateAccordionItem = (result, resultIndex) => {
+                const {
+                    import_date,
+                    job_reference_no,
+                    job_title,
+                    department,
+                    location,
+                    summary,
+                    key_qualifications,
+                    description,
+                    education_experience,
+                    base_pay_lower,
+                    base_pay_upper,
+                    base_pay_type,
+                    job_posting_url,
+                    top_n_words,
+                    n_gram_matches
+                } = result;
+
+                const highlight_strings = (str) => {
+                    const strArr = str.split('\\n');
+                    let strHTML = strArr.map(x => {
+                        return `<p>${x}</p>`;
+                    }).join('');
+                    for (let top_word of Object.keys(top_n_words)) {
+                        strHTML = strHTML.replaceAll(top_word, `<span class="top-word" style="background-color:${top_n_words[top_word].has_resume_match ? 'lightgreen': 'lightgrey'};">${top_word}</span>`)
+                    }
+                    for (let n_gram of n_gram_matches) {
+                        for (let match of n_gram['range_match']) {
+                            strHTML = strHTML.replaceAll(match, `<span class="n-match" style="border-bottom-color:${n_gram.has_resume_match ? 'lightgreen': 'lightgrey'}">${match}</span>`)
+                        }
+                    }
+                    return strHTML
+                }
+
+                return `<div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapse show" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse${resultIndex}" aria-expanded="true" aria-controls="collapse${resultIndex}">
+                            <div class="accordion-button-container">
+                                <span class="job-title"><a href='${job_posting_url}' target="_blank"/>${job_title}</a></span><span class="department">${department}</span>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="collapse${resultIndex}" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <div class="accordion-content-container">
+                                <div class="reference-container">
+                                    <span>Role Number: ${job_reference_no}</span>
+                                    <span>Date Posted: ${import_date}</span>
+                                </div>
+                                <div class="jd-text">
+                                    <h5>Summary</h5>
+                                    <div>${highlight_strings(summary)}</div>
+                                    <h5>Key Qualifications</h5>
+                                    <div>${highlight_strings(key_qualifications)}</div>
+                                    <h5>Description</h5>
+                                    <div>${highlight_strings(description)}</div>
+                                    <h5>Salary Band</h5>
+                                    <div>${base_pay_lower}-${base_pay_upper} (${base_pay_type})</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            const generateResults = (results) => {
+                const resultsAccordionInnerHTML = results.map(generateAccordionItem);
+                const accordion = document.getElementById('accordionResults');
+                accordion.innerHTML = resultsAccordionInnerHTML.join('');
+            };
+
+            generateResults(results)
+        </script>
+    </body>
+
+    </html>"""
+
+    with open('', 'w') as output_html_doc:
+
+        def javascriptify(template):
+            reference = {
+                '$$jtwr$$': str(jtrw),
+                'False': 'false',
+                'True': 'true'
+            }
+            for item in reference.keys():
+                template = template.replace(item, reference[item])
+            
+            return template
+        
+        html_template = javascriptify(html_template)
+        output_html_doc.write(html_template)
