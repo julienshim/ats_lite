@@ -44,3 +44,8 @@
 # WRB Wh­adverb
 
 target_part_of_speech = ["NN", "NNS", "NNP", "NNPS", "VB", "VBD", "VBG", "VBN", "VBP", "VBZ", "JJ", "JJR", "JJS"]
+user_defined_stop_words = ["'", ')', '#', ';', '—', '(', '’', '!', '/', '+', ',', 'a', '”', ':', '%', '–', '*', '&', '•', '?', '-', '“', '.']
+fdist_count = 20
+ngram_number = 2
+ngram_min_count = 2
+resume_txt_path = './assets/resume.txt'
