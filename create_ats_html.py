@@ -21,4 +21,11 @@ from src.settings_ats import target_part_of_speech, fdist_count, ngram_number, n
 from src.settings_results import csv_output_path
 from src.functions import generate_html_doc
 
-
+def findNgrams(text, n):
+    ngs = []
+    text = sent_tokenize(text)
+    for line in text:
+        token = nltk.word_tokenize(line)
+        ng = list(ngrams(token, n))
+        ngs.extend(ng)
+    return ngs
