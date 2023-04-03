@@ -26,3 +26,9 @@ def load_previously_imported_jobs():
         data = list(filter(remove_old_jobs, data))
         # data = list(map(get_job_ref_date, data))
         return data
+
+previously_imported_jobs_path = csv_output_path
+previously_imported_jobs_path_exists = path.exists(previously_imported_jobs_path)
+previously_imported_jobs = [] if not previously_imported_jobs_path_exists else load_previously_imported_jobs()
+previously_imported_jobs_len = len(previously_imported_jobs)
+csv_write_mode = 'w'
