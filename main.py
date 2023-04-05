@@ -43,3 +43,9 @@ def job_is_previously_imported(target_job_reference_no):
             return True
         
     return False
+
+def get_soup(page_number):
+    locations = get_target_locations()
+    response = get(f'')
+    soup = BeautifulSoup(response.text, 'html.parser')
+    return soup
