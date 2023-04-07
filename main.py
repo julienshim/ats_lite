@@ -86,3 +86,14 @@ def parse_job_item(job_item):
     }
     
     return job_items_dict
+
+def filter_job_items(job_item):
+    import_date = job_item['import_date']
+    department = job_item['department']
+    location = job_item['location']
+    job_reference = job_item['job_reference']
+    [year, month, day] = list(map(lambda x: int(x), import_date.split('-')))
+    import_date = datetime(year, month, day)
+    n_weeks_ago = get_date_n_weeks_ago()
+    
+    return (import_date >= n_weeks_ago) and (department not in ignore['department']) and (location not in ignore['location']) and (not job_is_previously_imported(job_reference))
