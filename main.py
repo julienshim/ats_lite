@@ -97,3 +97,26 @@ def filter_job_items(job_item):
     n_weeks_ago = get_date_n_weeks_ago()
     
     return (import_date >= n_weeks_ago) and (department not in ignore['department']) and (location not in ignore['location']) and (not job_is_previously_imported(job_reference))
+
+
+def fetch_all_jobs():
+    running = True
+    current_page_number = 1
+    tmp = []
+
+    while running:
+        soup = get_soup(current_page_number)
+        job_items = soup.find_all('tbody', {'id': compile(r'accordion_PIPE-[0-9]{1,}_group')})
+        job_items_parsed = list(map(parse_job_item, job_items))
+        job_items_parsed_filtered = list(filter(filter_job_items, job_items_parsed))
+        job_items_parsed_filtered_len = len(job_items_parsed_filtered)
+        if job_items_parsed_filtered_len == 0 :
+            running = False
+        else :
+            print(f'Fetching Page {current_page_number} jobs... {job_items_parsed_filtered_len} jobs found')
+            tmp += job_items_parsed_filtered
+            current_page_number += 1
+            sleep(seconds_range_between_fetch)
+    return tmp
+
+all_job_items_fetched = fetch_all_jobs()
