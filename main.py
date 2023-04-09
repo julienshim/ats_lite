@@ -120,3 +120,40 @@ def fetch_all_jobs():
     return tmp
 
 all_job_items_fetched = fetch_all_jobs()
+
+with open(previously_imported_jobs_path, csv_write_mode, encoding='utf-8') as f:
+    csv_writer = writer(f)
+    if csv_write_mode == 'w':
+        csv_writer.writerow(['import_date', 'job_reference_no', 'job_title', 'department', 'location', 'summary', 'key_qualifications', 'description', 'education_experience', 'base_pay_lower', 'base_pay_upper', 'base_pay_type', 'job_posting_url'])
+
+    jobs_written_count = 0
+    jobs_skipped_count = 0
+
+    for job_item_index, job_item in enumerate(all_job_items_fetched):
+        print(f'- Gather details... {job_item_index + 1} of {len(all_job_items_fetched)}')
+        job_title = job_item['job_title']
+        job_posting_url = job_item['job_link']
+        sleep(seconds_range_between_fetch)
+        task = get_job_posting_details(job_posting_url)
+        while task is None:
+            pass
+        [summary, key_qualifications, description, education_experience, base_pay_lower, base_pay_upper, base_pay_type] = task
+        job_reference_no = job_item['job_reference']
+        department = job_item['department']
+        location = job_item['location']
+        import_date = job_item['import_date']
+
+        is_previous_imported = job_is_previously_imported(job_reference_no)
+
+        if is_previous_imported:
+            jobs_skipped_count += 1
+        else:
+            job_item_row = [import_date, job_reference_no, job_title, department, location, summary, key_qualifications, description, education_experience, base_pay_lower, base_pay_upper, base_pay_type, job_posting_url]
+            csv_writer.writerow(job_item_row)
+            jobs_written_count += 1
+
+    for prev_job_item in previously_imported_jobs:
+        csv_writer.writerow(prev_job_item)
+
+
+    print(f'Done! {jobs_written_count} new jobs added.')
