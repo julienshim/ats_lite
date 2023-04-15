@@ -1,6 +1,6 @@
 from random import randint
 
-csv_output_path = ''
+csv_output_path = './assets/results.csv'
 
 seconds_range_between_fetch = randint(15, 30)
 
