@@ -40,3 +40,11 @@ class JobItem:
 
     def get_write_row(self):
         return [self.import_date, self.job_reference_no, self.job_title, self.department, self.location, self.summary, self.key_qualifications, self.description, self.education_experience, self.base_pay_lower, self.base_pay_upper, self.base_pay_type, self.job_posting_url]
+
+def convert_imported_jobs_to_job_items(data_body, is_previously_imported):
+    job_items = []
+    for row in data_body:
+        [import_date, job_reference_no, job_title, department, location, summary, key_qualifications, description, education_experience, base_pay_lower, base_pay_upper, base_pay_type, job_posting_url] = row
+        new_job_item = JobItem(import_date, job_reference_no, job_title, department, location, summary, key_qualifications, description, education_experience, base_pay_lower, base_pay_upper, base_pay_type, job_posting_url, is_previously_imported)
+        job_items.append(new_job_item)
+    return job_items
