@@ -48,3 +48,18 @@ def convert_imported_jobs_to_job_items(data_body, is_previously_imported):
         new_job_item = JobItem(import_date, job_reference_no, job_title, department, location, summary, key_qualifications, description, education_experience, base_pay_lower, base_pay_upper, base_pay_type, job_posting_url, is_previously_imported)
         job_items.append(new_job_item)
     return job_items
+
+def load_previously_imported_jobs():
+    with open(csv_output_path) as input_csv:
+        data = [row for row in reader(input_csv)]
+        # data_header = data[0]
+        data_body = data[1:]
+        previously_imported_job_items = convert_imported_jobs_to_job_items(data_body, True)
+        previously_imported_job_items = sorted(previously_imported_job_items, key=lambda x: x.import_date, reverse=True)
+        previously_imported_job_items = list(filter(lambda x: x.is_irrelevant(), previously_imported_job_items)) 
+        return previously_imported_job_items
+
+previously_imported_jobs_path = csv_output_path
+previously_imported_jobs_path_exists = path.exists(previously_imported_jobs_path)
+previously_imported_jobs = [] if not previously_imported_jobs_path_exists else load_previously_imported_jobs()
+previously_imported_jobs_len = len(previously_imported_jobs)
