@@ -63,3 +63,12 @@ previously_imported_jobs_path = csv_output_path
 previously_imported_jobs_path_exists = path.exists(previously_imported_jobs_path)
 previously_imported_jobs = [] if not previously_imported_jobs_path_exists else load_previously_imported_jobs()
 previously_imported_jobs_len = len(previously_imported_jobs)
+csv_write_mode = 'w'
+
+def job_is_previously_imported(target_job_reference_no):
+    if len(previously_imported_jobs) == 0:
+        return False
+    for job_item in previously_imported_jobs:
+        if job_item.job_reference_no == target_job_reference_no:
+            return True
+    return False
