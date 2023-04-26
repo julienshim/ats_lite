@@ -72,3 +72,9 @@ def job_is_previously_imported(target_job_reference_no):
         if job_item.job_reference_no == target_job_reference_no:
             return True
     return False
+
+def get_soup(page_number):
+    locations = get_target_locations()
+    response = get(f'https://jobs.apple.com/en-us/search?location={locations}&page={page_number}')
+    soup = BeautifulSoup(response.text, 'html.parser')
+    return soup
