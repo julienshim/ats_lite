@@ -108,3 +108,11 @@ def parse_job_item(job_item):
     import_date = f'{year}-{date_dict[month]}-{"0" if len(str(day)) == 1 else ""}{day}'
     
     return [import_date, job_reference_no, job_title, department, location, job_posting_url]
+
+def filter_job_items(job_item):
+    [import_date, job_reference_no, job_title, department, location, job_posting_url] = job_item
+    [year, month, day] = list(map(lambda x: int(x), import_date.split('-')))
+    import_date_datetime = datetime(year, month, day)
+    n_weeks_ago_datetime = get_date_n_weeks_ago()
+    
+    return (import_date_datetime >= n_weeks_ago_datetime) and (department not in ignore['department']) and (location not in ignore['location']) and (not job_is_previously_imported(job_reference_no))
