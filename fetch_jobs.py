@@ -136,3 +136,40 @@ def fetch_jobs():
             current_page_number += 1
             sleep(seconds_range_between_fetch)
     return fetched_jobs
+
+def convert_fetched_jobs_to_job_items(fetched_jobs, is_previously_imported):
+    job_items = []
+    for job_item_index, job_item in enumerate(fetched_jobs):
+        print(f'- Gather details... {job_item_index + 1} of {len(fetched_jobs)}')
+        [import_date, job_reference_no, job_title, department, location, job_posting_url] = job_item
+        sleep(seconds_range_between_fetch)
+        task = get_job_posting_details(job_posting_url)
+        while task is None:
+            pass
+        [summary, key_qualifications, description, education_experience, base_pay_lower, base_pay_upper, base_pay_type] = task
+        new_job_item = JobItem(import_date, job_reference_no, job_title, department, location, summary, key_qualifications, description, education_experience, base_pay_lower, base_pay_upper, base_pay_type, job_posting_url, is_previously_imported)
+        job_items.append(new_job_item)
+    return job_items
+
+fetched_jobs = fetch_jobs()
+fetched_jobs = convert_fetched_jobs_to_job_items(fetched_jobs, False)
+
+with open(previously_imported_jobs_path, csv_write_mode, encoding='utf-8') as f:
+    csv_writer = writer(f)
+
+    if csv_write_mode == 'w':
+        csv_writer.writerow(['import_date', 'job_reference_no', 'job_title', 'department', 'location', 'summary', 'key_qualifications', 'description', 'education_experience', 'base_pay_lower', 'base_pay_upper', 'base_pay_type', 'job_posting_url'])
+
+    jobs_written_count = 0
+    jobs_skipped_count = 0
+
+    job_items_to_write = previously_imported_jobs + fetched_jobs
+    job_items_to_write = sorted(job_items_to_write, key=lambda x: x.import_date, reverse=True)
+
+    for job_item_index, job_item in enumerate(job_items_to_write):
+        job_item_row = job_item.get_write_row()
+        csv_writer.writerow(job_item_row)
+        if not job_item.is_previously_imported:
+            jobs_written_count += 1
+
+    print(f'Done! {jobs_written_count} new jobs added.')
