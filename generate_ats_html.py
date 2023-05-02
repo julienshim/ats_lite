@@ -21,3 +21,12 @@ from os import system
 from src.settings_ats import target_part_of_speech, fdist_count, ngram_number, ngram_min_count, user_defined_stop_words, resume_txt_path
 from src.settings_results import csv_output_path
 from src.functions import generate_html_doc
+
+def findNgrams(text, n):
+    ngs = []
+    text = sent_tokenize(text)
+    for line in text:
+        token = nltk.word_tokenize(line)
+        ng = list(ngrams(token, n))
+        ngs.extend(ng)
+    return ngs
