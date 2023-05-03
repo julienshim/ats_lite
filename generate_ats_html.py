@@ -30,3 +30,11 @@ def findNgrams(text, n):
         ng = list(ngrams(token, n))
         ngs.extend(ng)
     return ngs
+
+def filter_ngrams(tup):
+    for el in tup[0]:
+        if el in stop_words:
+            return False
+    if tup[1] < ngram_min_count:
+        return False
+    return True
