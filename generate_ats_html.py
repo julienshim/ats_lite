@@ -38,3 +38,14 @@ def filter_ngrams(tup):
     if tup[1] < ngram_min_count:
         return False
     return True
+
+def reduce_n_gram_range_matches(n_gram_range_matches, substring):
+    results = []
+    for match in n_gram_range_matches:
+        if substring in match:
+            r_index = match.lower().rindex(substring)
+            if r_index == 0:
+                results.append(match)
+            else:
+                results.append(match[r_index:])
+    return list(set(results))
