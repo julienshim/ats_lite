@@ -49,24 +49,24 @@ Install `nltk` library (optional, if you're interested in experimental keyword a
 
 Setting Search Location
 
-* On the main search page, look at the address bar to confirm the location you have selected, the string comes after `location=`: https://jobs.sample.com/en-us/search?location=`somewhere`
+* On the main search page, look at the address bar to confirm the location you have selected, the string comes after `location=`: https://jobs.apple.com/en-us/search?location=`san-diego-SDO`
 
 ```python
 search_parameters = {
     'location': [
-        'somewhere'
+        'santa-clara-valley-cupertino-SCV'
     ]
 }
 ```
 
 Setting Ignore List
 
-* `Department` refers to `Teams` section when refining search. The only difference I have between internal and external searches is that internal search filters out sample Retail by default.
+* `Department` refers to `Teams` section when refining search. The only difference I have between internal and external searches is that internal search filters out Apple Retail by default.
 
 ```python
     ignore = {
-        "department": ['sample'],
-        "location": ['nowhere']
+        "department": ['Apple Retail'],
+        "location": ['Various Locations within  United States ']
     }
 ```
 
@@ -75,7 +75,7 @@ Setting CSV Output Path
 * Refers to the name and path of CSV you would like results to write to.
 
 ```python
-csv_output_path = './assets/sample.csv'
+csv_output_path = './assets/results.csv'
 ```
 
 Seconds Between Fetching
@@ -138,14 +138,22 @@ IMPORTANT: BEFORE RUNNING ANY OF THE FOLLOWING COMMANDS, BE SURE TO HAVE ALREADY
 To collection job posts, run:
 (This will take come time)
 ```zsh
-python3 main.py
+python3 fetch_jobs.py
 ```
 ---
 To run ATS analysis on collected jobs, run the follow:
 (HTML doc can be found in ./assets/index.html)
 
 ```zsh
-python3 create_ats_html.py
+python3 generate_ats_html.py
+
+```
+
+* ATS analysis (Alternative)
+To run dev index.html, in a new terminal navigate to the dev folder, run the following, then visit `localhost:8000`:
+```zsh
+cd ~/Developer/ats_lite/dev/
+python3 -m http.server
 ```
 
 ## Screenshot
